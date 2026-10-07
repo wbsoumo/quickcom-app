@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "345310902244",
+    "project_id": "sbmart-26423",
+    "storage_bucket": "sbmart-26423.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:345310902244:android:181c35f2dce97959a4f9f1",
+        "android_client_info": {
+          "package_name": "com.sbmart.quickapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZKnPTlUyPoiI_9-ajG9GKHcgAfmmR37Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:345310902244:android:a2486acb4214b7b9a4f9f1",
+        "android_client_info": {
+          "package_name": "com.sbmart.taskbazi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZKnPTlUyPoiI_9-ajG9GKHcgAfmmR37Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
