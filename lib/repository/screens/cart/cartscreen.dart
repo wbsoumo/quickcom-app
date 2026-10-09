@@ -98,6 +98,8 @@ class _CartScreenState extends State<CartScreen> {
   List<Map<String, dynamic>> _savedAddresses = [];
   String _selectedDeliveryAddress = "";
   String _selectedDeliveryTag = "Location";
+  double? _selectedLat;
+  double? _selectedLng;
   bool _hasSavedAddressInArea = false;
   Map<String, dynamic>? _selectedSpecialDealItem;
   double _walletBalance = 0.0;
@@ -233,6 +235,8 @@ class _CartScreenState extends State<CartScreen> {
       _activeStore = store;
       _isWithinCoverage = isCoverage;
       _calculatedDistanceKm = distKm;
+      _selectedLat = userLat;
+      _selectedLng = userLng;
       _selectedDeliveryAddress = matchedAddress.isNotEmpty ? matchedAddress : (currentLoc.isNotEmpty ? currentLoc : "Select Location");
       _selectedDeliveryTag = hasSaved ? tag : (store?['name'] ?? 'Selected Location');
       _hasSavedAddressInArea = _selectedDeliveryAddress.isNotEmpty && _selectedDeliveryAddress != "Select Location";
@@ -2059,6 +2063,28 @@ class _CartScreenState extends State<CartScreen> {
                                     final savedPhone = prefs.getString('user_phone') ?? '';
                                     final savedName = prefs.getString('user_name') ?? (savedPhone.isNotEmpty ? "Customer ($savedPhone)" : "Customer");
 
+                                    double userOrderLat = 23.4126;
+                                    double userOrderLng = 88.4292;
+                                    if (_isPickupSelected) {
+                                      userOrderLat = double.tryParse(activeStore?['latitude']?.toString() ?? '23.4013') ?? 23.4013;
+                                      userOrderLng = double.tryParse(activeStore?['longitude']?.toString() ?? '88.5010') ?? 88.5010;
+                                    } else {
+                                      Map<String, dynamic>? matchedAddr;
+                                      for (var a in _savedAddresses) {
+                                        if ((a['address_details'] ?? '') == _selectedDeliveryAddress) {
+                                          matchedAddr = a;
+                                          break;
+                                        }
+                                      }
+                                      if (matchedAddr != null && matchedAddr['latitude'] != null && matchedAddr['longitude'] != null) {
+                                        userOrderLat = double.tryParse(matchedAddr['latitude'].toString()) ?? 23.4126;
+                                        userOrderLng = double.tryParse(matchedAddr['longitude'].toString()) ?? 88.4292;
+                                      } else {
+                                        userOrderLat = _selectedLat ?? prefs.getDouble('user_selected_lat') ?? double.tryParse(prefs.getString('user_selected_lat') ?? '') ?? 23.4126;
+                                        userOrderLng = _selectedLng ?? prefs.getDouble('user_selected_lng') ?? double.tryParse(prefs.getString('user_selected_lng') ?? '') ?? 88.4292;
+                                      }
+                                    }
+
                                     if (!_isPickupSelected && _selectedDeliveryAddress.isNotEmpty && savedPhone.isNotEmpty) {
                                       if (!_savedAddresses.any((a) => (a['address_details'] ?? '') == _selectedDeliveryAddress)) {
                                         await ApiService.saveUserAddress(
@@ -2067,8 +2093,8 @@ class _CartScreenState extends State<CartScreen> {
                                           addressDetails: _selectedDeliveryAddress,
                                           receiverName: savedName,
                                           receiverPhone: savedPhone,
-                                          latitude: double.tryParse(activeStore?['latitude']?.toString() ?? '23.4013') ?? 23.4013,
-                                          longitude: double.tryParse(activeStore?['longitude']?.toString() ?? '88.5010') ?? 88.5010,
+                                          latitude: userOrderLat,
+                                          longitude: userOrderLng,
                                         );
                                       }
                                     }
@@ -2077,8 +2103,8 @@ class _CartScreenState extends State<CartScreen> {
                                       userName: savedName,
                                       userPhone: savedPhone,
                                       deliveryAddress: _isPickupSelected ? "Self Pickup at Store" : _selectedDeliveryAddress,
-                                      latitude: double.tryParse(activeStore?['latitude']?.toString() ?? '23.4013') ?? 23.4013,
-                                      longitude: double.tryParse(activeStore?['longitude']?.toString() ?? '88.5010') ?? 88.5010,
+                                      latitude: userOrderLat,
+                                      longitude: userOrderLng,
                                       items: itemsList,
                                       storeId: currentStoreId,
                                       paymentMethod: "Cash on Delivery",
